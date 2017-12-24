@@ -19,13 +19,17 @@ The two coolest parts of the code is (1) save a screen capture to a file and (2)
 You may also like how I can easily perform any measurement the scope offers, and specify units like s, ms, us and 
 v, mv and uv. 
 
-**Note: you will need to edit rigol_ds1054z to specify your specific scope device. See the hackaday webpage for how to do this.
+**Note: you will need to edit rigol_ds1054z.py to specify your specific scope device. See the hackaday webpage for how to do this.
 
 **Note: when using "write_waveform_data" the first character in the data file is invalid, it needs to be manually stripped from the file. I could not find an easy way to remove it. If you find a way, please let me know.
 
 Files:
+
 rigol_ds1054z.py <- this is a class which will be imported by the high-level script
 
 test_rigol.py    <- this is the high-level script that creates an instance of the class and calls functions
+
+Here is the link to the official Rigol Programming Guide that I referenced:
+http://beyondmeasure.rigoltech.com/acton/attachment/1579/f-0386/1/-/-/-/-/DS1000Z_Programming%20Guide_EN.pdf
 
 I hope this helps at least one person.
