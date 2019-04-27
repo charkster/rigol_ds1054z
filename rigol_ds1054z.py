@@ -12,7 +12,7 @@ class rigol_ds1054z:
 		resources = visa.ResourceManager('@py')
 		# insert your device here
 		# resources.list_resources() will show you the USB resource to put below
-		self.oscilloscope = resources.open_resource('USB0::6833::1230::DS1ZAXXXXXX::0::INSTR')
+		self.oscilloscope = resources.open_resource('USB0::6833::1230::DS1ZA192107675::0::INSTR')
 		self.debug = debug
 
 	def print_info(self):
@@ -203,8 +203,16 @@ class rigol_ds1054z:
 			self.oscilloscope.write(':DEC' + str(decode_channel) + ':IIC:ADDR RW')
 
 	def single_trigger(self):
-		self.oscilloscope.write(':TRIG:SWE SING')
-		time.sleep(5)
+		self.oscilloscope.write(':SING')
+		time.sleep(3)
+		
+	def force_trigger(self):
+		self.oscilloscope.write(':TFOR')
+		time.sleep(3)
+		
+	def run_trigger(self):
+		self.oscilloscope.write(':RUN')
+		time.sleep(3)
 		
 	# only allowed values are 6e3, 6e4, 6e5, 6e6, 12e6 for single channels
 	# only allowed values are 6e3, 6e4, 6e5, 6e6, 12e6 for   dual channels
@@ -236,3 +244,25 @@ class rigol_ds1054z:
 			reading = reading.replace(",", "\n")
 			fid.write(reading)
 		fid.close()
+
+	def write_scope_settings_to_file(self, filename=''):
+		self.oscilloscope.write(':SYST:SET?')
+		raw_data = self.oscilloscope.read_raw()[2+9:]
+		
+		if (filename == ''):
+			filename = "rigol_settings_" + datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S") +".stp"
+		fid = open(filename, 'wb')
+		fid.write(raw_data)
+		fid.close()
+		print ("Wrote oscilloscope settings to filename " + '\"' + filename + '\"')
+		time.sleep(5)
+		
+#	def restore_scope_settings_from_file(self, filename=''):
+#		if (filename == ''):
+#			print "ERROR: must specify filename\n"
+#		else:
+#			with open(filename, mode='rb') as file: # b is important -> binary
+#				fileContent = file.read()
+#			self.oscilloscope.write_binary_values(':SYST:SET', fileContent , datatype='x')
+#			print ("Wrote oscilloscope settings to scope")
+#			time.sleep(5)
