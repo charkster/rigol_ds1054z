@@ -20,6 +20,7 @@ class rigol_ds1054z:
 		fullreading = self.oscilloscope.read_raw()
 		readinglines = fullreading.splitlines()
 		print("Scope information: " + readinglines[0])
+		time.sleep(2)
 	
 	class measurement:
 		def __init__(self, name='', description='', command='', unit='', return_type=''):
@@ -134,7 +135,7 @@ class rigol_ds1054z:
 	def reset(self):
 		self.oscilloscope.write('*RST')
 		print "Reset oscilloscope"
-		time.sleep(5)
+		time.sleep(8)
 		
 	# probe should either be 10.0 or 1.0, per the setting on the physical probe
 	def setup_channel(self, channel=1, on=1, offset_divs=0.0, volts_per_div=1.0, probe=10.0):
@@ -257,12 +258,18 @@ class rigol_ds1054z:
 		print ("Wrote oscilloscope settings to filename " + '\"' + filename + '\"')
 		time.sleep(5)
 		
-#	def restore_scope_settings_from_file(self, filename=''):
-#		if (filename == ''):
-#			print "ERROR: must specify filename\n"
-#		else:
-#			with open(filename, mode='rb') as file: # b is important -> binary
-#				fileContent = file.read()
-#			self.oscilloscope.write_binary_values(':SYST:SET', fileContent , datatype='x')
-#			print ("Wrote oscilloscope settings to scope")
-#			time.sleep(5)
+	def restore_scope_settings_from_file(self, filename=''):
+		if (filename == ''):
+			print "ERROR: must specify filename\n"
+		else:
+			with open(filename, mode='rb') as file: # b is important -> binary
+				fileContent = file.read()
+				valList = list()
+				#alter ending to append new CRLF
+				fileContent = fileContent + chr(13) + chr(10)
+				#convert to a list that write_binary_values can iterate
+				for x in range(0,len(fileContent)-1):
+					valList.append(ord(fileContent[x]))
+				self.oscilloscope.write_binary_values(':SYST:SET ', valList, datatype='B', is_big_endian=True) 
+			print ("Wrote oscilloscope settings to scope")
+			time.sleep(8)
