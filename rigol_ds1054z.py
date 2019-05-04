@@ -118,7 +118,7 @@ class rigol_ds1054z:
 	# if no filename is provided, the timestamp will be the filename
 	def write_screen_capture(self, filename=''):
 		self.oscilloscope.write(':DISP:DATA? ON,OFF,PNG')
-		raw_data = self.oscilloscope.read_raw()[2+9:]
+		raw_data = self.oscilloscope.read_raw()[11:] # strip off first 11 bytes
 		# save image file
 		if (filename == ''):
 			filename = "rigol_" + datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S") +".png"
@@ -248,7 +248,7 @@ class rigol_ds1054z:
 
 	def write_scope_settings_to_file(self, filename=''):
 		self.oscilloscope.write(':SYST:SET?')
-		raw_data = self.oscilloscope.read_raw()[2+9:]
+		raw_data = self.oscilloscope.read_raw()[11:] # strip off first 11 bytes
 		
 		if (filename == ''):
 			filename = "rigol_settings_" + datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S") +".stp"
