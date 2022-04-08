@@ -1,4 +1,6 @@
 # rigol_ds1054z
+![picture](https://asset.conrad.com/media10/isa/160267/c1/-/en/1392205_BB_00_FB/image.jpg)
+
 Python Class for controlling the Rigol DS1054z Oscilloscope
 
 There is no license for this work... it is use at your own risk (I assume no liability).
