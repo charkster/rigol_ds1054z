@@ -1,4 +1,4 @@
-import visa
+import pyvisa
 import datetime
 import time
 import re
@@ -8,18 +8,17 @@ from math import floor, log10
 class rigol_ds1054z:
 	
 	# Constructor
-	def __init__(self, debug=False):
-		resources = visa.ResourceManager('@py')
-		# insert your device here
-		# resources.list_resources() will show you the USB resource to put below
-		self.oscilloscope = resources.open_resource('USB0::6833::1230::DS1ZA192107675::0::INSTR')
+	def __init__(self, resName, debug=False):
+		resources = pyvisa.ResourceManager('@py')
+		# resources.list_resources() will show you the USB resource to pass in resName
+		self.oscilloscope = resources.open_resource(resName)
 		self.debug = debug
 
 	def print_info(self):
 		self.oscilloscope.write('*IDN?')
 		fullreading = self.oscilloscope.read_raw()
 		readinglines = fullreading.splitlines()
-		print("Scope information: " + readinglines[0])
+		print("Scope information: " + str(readinglines[0].decode()))
 		time.sleep(2)
 	
 	class measurement:
@@ -130,11 +129,11 @@ class rigol_ds1054z:
 		
 	def close(self):
 		self.oscilloscope.close()
-		print "Closed USB session to oscilloscope"
+		print("Closed USB session to oscilloscope")
 		
 	def reset(self):
 		self.oscilloscope.write('*RST')
-		print "Reset oscilloscope"
+		print("Reset oscilloscope")
 		time.sleep(8)
 		
 	# probe should either be 10.0 or 1.0, per the setting on the physical probe
@@ -221,7 +220,7 @@ class rigol_ds1054z:
 	# the int conversion is needed for scientific notation values
 	def setup_mem_depth(self, memory_depth=12e6):
 		self.oscilloscope.write(':ACQ:MDEP ' + str(int(memory_depth)))
-		print "Acquire memory depth set to %d samples" % memory_depth
+		print("Acquire memory depth set to %d samples" % memory_depth)
 
 	def write_waveform_data(self, channel=1, filename=''):
 		self.oscilloscope.write(':WAV:SOUR: CHAN' + str(channel))
@@ -260,7 +259,7 @@ class rigol_ds1054z:
 		
 	def restore_scope_settings_from_file(self, filename=''):
 		if (filename == ''):
-			print "ERROR: must specify filename\n"
+			print ("ERROR: must specify filename\n")
 		else:
 			with open(filename, mode='rb') as file: # b is important -> binary
 				fileContent = file.read()

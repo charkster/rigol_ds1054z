@@ -9,7 +9,7 @@ import smbus
 #  to demonstrate triggering on SDA data (you don't need a slave device,
 #  the scope is just observing the master write out to the bus)
 
-scope = rigol_ds1054z()
+scope = rigol_ds1054z('USB0::6833::1230::DS1ZA192107675::0::INSTR')
 scope.print_info()
 scope.reset()
 scope.setup_channel(channel=1,on=1,offset_divs=2.0, volts_per_div=2.0)
